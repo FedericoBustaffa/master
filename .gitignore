@@ -1,0 +1,31 @@
+*.x
+*.o
+*.a
+*.so
+*.log
+
+bin/
+obj/
+
+# Visual Studio
+.vs/
+.vscode/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+build/
+*.cmake
+.cache/
+*.in
+compile_commands.json
+Makefile
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
