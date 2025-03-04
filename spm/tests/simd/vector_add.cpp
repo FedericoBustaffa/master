@@ -1,8 +1,111 @@
 #include <iostream>
+#include <random>
 #include <chrono>
+#include <immintrin.h>
+
+void init(float* a, float* b, uint64_t n)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis(0.0, 1.0);
+
+	for (size_t i = 0; i < n; i++)
+	{
+		a[i] = dis(gen);
+		b[i] = dis(gen);
+	}
+}
+
+void copy(float* a, float* b, uint64_t n)
+{
+	for (size_t i = 0; i < n; i++)
+		a[i] = b[i];
+}
+
+void vadd(float* a, float* b, float* c, uint64_t n)
+{
+	for (size_t i = 0; i < n; i++)
+		c[i] = a[i] + b[i];
+}
+
+void vadd128(float* a, float* b, float* c, uint64_t n)
+{
+	for (uint64_t i = 0; i < n; i += 4)
+	{
+		__m128 va = _mm_loadu_ps(&a[i]);
+		__m128 vb = _mm_loadu_ps(&b[i]);
+		__m128 vs = _mm_add_ps(va, vb);
+		_mm_storeu_ps(&c[i], vs);
+	}
+}
+
+void vadd128_aligned(float* a, float* b, float* c, uint64_t n)
+{
+	for (uint64_t i = 0; i < n; i += 4)
+	{
+		__m128 va = _mm_load_ps(&a[i]);
+		__m128 vb = _mm_load_ps(&b[i]);
+		__m128 vs = _mm_add_ps(va, vb);
+		_mm_store_ps(&c[i], vs);
+	}
+}
 
 int main(int argc, const char** argv)
 {
-	std::printf("Hello World\n");
+	uint64_t n = 1UL << 27;
+	double size = (n * sizeof(float)) / (1024 * 1024);
+	std::printf("array size: %lu -> %g MB\n", n, size);
+
+	float* a = new float[n];
+	float* b = new float[n];
+	float* c = new float[n];
+
+	auto start = std::chrono::high_resolution_clock::now();
+	init(a, b, n);
+	auto end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> init_time = end - start;
+	std::printf("initialization elapsed time: %f seconds\n", init_time.count());
+
+	start = std::chrono::high_resolution_clock::now();
+	vadd(a, b, c, n);
+	end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> plain = end - start;
+	std::printf("vadd elapsed time: %f seconds\n", plain.count());
+
+	start = std::chrono::high_resolution_clock::now();
+	vadd128(a, b, c, n);
+	end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> sse = end - start;
+	std::printf("vadd128 elapsed time: %f seconds\n", sse.count());
+	std::printf("plain to simd speed-up: %f\n", plain.count() / sse.count());
+
+	delete[] a;
+	delete[] b;
+	delete[] c;
+
+	float* a2 = new (std::align_val_t(32)) float[n];
+	float* b2 = new (std::align_val_t(32)) float[n];
+	float* c2 = new (std::align_val_t(32)) float[n];
+	copy(a2, a, n);
+	copy(b2, b, n);
+
+	start = std::chrono::high_resolution_clock::now();
+	vadd(a2, b2, c2, n);
+	end = std::chrono::high_resolution_clock::now();
+	plain = end - start;
+	std::printf("vadd elapsed time: %f seconds\n", plain.count());
+
+	start = std::chrono::high_resolution_clock::now();
+	vadd128_aligned(a2, b2, c2, n);
+	end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> sse_aligned = end - start;
+	std::printf("vadd128 aligned elapsed time: %f seconds\n", sse_aligned.count());
+
+	std::printf("plain to simd_aligned speed-up: %f\n", plain.count() / sse_aligned.count());
+
+	delete[] a2;
+	delete[] b2;
+	delete[] c2;
+
 	return 0;
 }
