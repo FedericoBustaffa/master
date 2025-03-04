@@ -23,7 +23,6 @@ build/
 .cache/
 *.in
 compile_commands.json
-Makefile
 
 # Sistema operativo
 .DS_Store
