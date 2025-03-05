@@ -83,9 +83,9 @@ int main(int argc, const char** argv)
 	delete[] b;
 	delete[] c;
 
-	float* a2 = new (std::align_val_t(32)) float[n];
-	float* b2 = new (std::align_val_t(32)) float[n];
-	float* c2 = new (std::align_val_t(32)) float[n];
+	float* a2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
+	float* b2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
+	float* c2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
 	copy(a2, a, n);
 	copy(b2, b, n);
 
@@ -103,9 +103,9 @@ int main(int argc, const char** argv)
 
 	std::printf("plain to simd_aligned speed-up: %f\n", plain.count() / sse_aligned.count());
 
-	delete[] a2;
-	delete[] b2;
-	delete[] c2;
+	_mm_free(a2);
+	_mm_free(b2);
+	_mm_free(c2);
 
 	return 0;
 }
