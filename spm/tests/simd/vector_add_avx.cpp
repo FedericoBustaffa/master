@@ -28,28 +28,6 @@ void vadd(float* a, float* b, float* c, uint64_t n)
 		c[i] = a[i] + b[i];
 }
 
-void vadd128(float* a, float* b, float* c, uint64_t n)
-{
-	for (uint64_t i = 0; i < n; i += 4)
-	{
-		__m128 va = _mm_loadu_ps(&a[i]);
-		__m128 vb = _mm_loadu_ps(&b[i]);
-		__m128 vs = _mm_add_ps(va, vb);
-		_mm_storeu_ps(&c[i], vs);
-	}
-}
-
-void vadd128_aligned(float* a, float* b, float* c, uint64_t n)
-{
-	for (uint64_t i = 0; i < n; i += 4)
-	{
-		__m128 va = _mm_load_ps(&a[i]);
-		__m128 vb = _mm_load_ps(&b[i]);
-		__m128 vs = _mm_add_ps(va, vb);
-		_mm_store_ps(&c[i], vs);
-	}
-}
-
 void vadd256(float* a, float* b, float* c, uint64_t n)
 {
 	for (uint64_t i = 0; i < n; i += 8)
@@ -74,13 +52,14 @@ void vadd256_aligned(float* a, float* b, float* c, uint64_t n)
 
 int main(int argc, const char** argv)
 {
-	uint64_t n = 1UL << 28;
+	uint64_t e = argc <= 1 ? 20UL : std::atoi(argv[1]);
+	uint64_t n = 1 << e;
 	double size = (n * sizeof(float)) / (1024 * 1024);
 	std::printf("array size: %lu -> %g MB\n", n, size);
 
-	float* a = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
-	float* b = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
-	float* c = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
+	float* a = new float[n];
+	float* b = new float[n];
+	float* c = new float[n];
 
 	auto start = std::chrono::high_resolution_clock::now();
 	init(a, b, n);
@@ -92,51 +71,37 @@ int main(int argc, const char** argv)
 	vadd(a, b, c, n);
 	end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> plain = end - start;
-	std::printf("vadd elapsed time: %f seconds\n", plain.count());
-
-	start = std::chrono::high_resolution_clock::now();
-	vadd128(a, b, c, n);
-	end = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> sse = end - start;
-	std::printf("vadd128 elapsed time: %f seconds\n", sse.count());
-	std::printf("plain to simd128 speed-up: %f\n", plain.count() / sse.count());
+	std::printf("plain elapsed time: %f seconds\n", plain.count());
 
 	start = std::chrono::high_resolution_clock::now();
 	vadd256(a, b, c, n);
 	end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> avx = end - start;
-	std::printf("vadd256 elapsed time: %f seconds\n", avx.count());
-	std::printf("plain to simd256 speed-up: %f\n", plain.count() / avx.count());
-
-	_mm_free(a);
-	_mm_free(b);
-	_mm_free(c);
+	std::printf("avx unaligned elapsed time: %f seconds\n", avx.count());
 
 	float* a2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
 	float* b2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
 	float* c2 = static_cast<float*>(_mm_malloc(n * sizeof(float), 32));
-	copy(a2, a, n);
-	copy(b2, b, n);
+	init(a2, b2, n);
 
 	start = std::chrono::high_resolution_clock::now();
 	vadd(a2, b2, c2, n);
 	end = std::chrono::high_resolution_clock::now();
 	plain = end - start;
-	std::printf("vadd elapsed time: %f seconds\n", plain.count());
-
-	start = std::chrono::high_resolution_clock::now();
-	vadd128_aligned(a2, b2, c2, n);
-	end = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> sse_aligned = end - start;
-	std::printf("vadd128 aligned elapsed time: %f seconds\n", sse_aligned.count());
-	std::printf("plain to sse_aligned speed-up: %f\n", plain.count() / sse_aligned.count());
+	std::printf("plain aligned elapsed time: %f seconds\n", plain.count());
 
 	start = std::chrono::high_resolution_clock::now();
 	vadd256_aligned(a2, b2, c2, n);
 	end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> avx_aligned = end - start;
-	std::printf("vadd256 aligned elapsed time: %f seconds\n", avx_aligned.count());
-	std::printf("plain to avx_aligned speed-up: %f\n", plain.count() / avx_aligned.count());
+	std::printf("avx aligned elapsed time: %f seconds\n", avx_aligned.count());
+
+	std::printf("plain to avx unaligned speed-up: %f\n", plain.count() / avx.count());
+	std::printf("plain to avx aligned speed-up: %f\n", plain.count() / avx_aligned.count());
+
+	_mm_free(a);
+	_mm_free(b);
+	_mm_free(c);
 
 	_mm_free(a2);
 	_mm_free(b2);
