@@ -99,9 +99,9 @@ int main(int argc, const char** argv)
 	std::printf("plain to sse speed-up: %f\n", plain.count() / sse.count());
 	std::printf("plain to sse aligned speed-up: %f\n", plain.count() / sse_aligned.count());
 
-	_mm_free(a);
-	_mm_free(b);
-	_mm_free(c);
+	delete[] a;
+	delete[] b;
+	delete[] c;
 
 	_mm_free(a2);
 	_mm_free(b2);
