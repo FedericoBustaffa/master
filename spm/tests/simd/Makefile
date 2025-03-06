@@ -1,5 +1,5 @@
 CXX 		= g++
-CXXFLAGS	+= -Wall -std=c++17 -mavx -mavx512f
+CXXFLAGS	+= -Wall -std=c++17 -mavx -mavx2
 OPTFLAGS	= # -march=native -ftree-vectorize
 INCLUDES	= -I. -I./include
 LIBS		= #-pthread
