@@ -43,7 +43,6 @@ void false_sharing_increment(volatile pack_t& pack)
 
 int main(int argc, char* argv[])
 {
-
 	pack_t seq_pack;
 
 	TIMERSTART(sequential_increment);

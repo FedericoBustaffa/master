@@ -20,4 +20,4 @@ all: $(TARGET)
 clean: 
 	-rm -fr *.o *~
 cleanall: clean
-	-rm -fr $(TARGET)
+	-rm -fr *.x
