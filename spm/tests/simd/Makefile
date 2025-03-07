@@ -1,6 +1,6 @@
 CXX 		= g++
-CXXFLAGS	+= -g -Wall -std=c++17 -mavx -mavx2
-OPTFLAGS	= # -march=native -ftree-vectorize
+CXXFLAGS	+= -g -Wall -std=c++17 -mavx2 -mfma -march=native
+OPTFLAGS	= -O2
 INCLUDES	= -I. -I./include
 LIBS		= #-pthread
 SOURCES		= $(wildcard *.cpp)
@@ -14,7 +14,7 @@ TARGET		= $(SOURCES:.cpp=)
 
 all: $(TARGET)
 
-clean: 
+clean:
 	-rm -rf *.o *~ *.x
 
 recompile: clean all
