@@ -1,6 +1,6 @@
 CXX 		= g++
-CXXFLAGS	+= -Wall -std=c++17 -mavx2 -mfma -fno-prefetch-loop-arrays
-OPTFLAGS	= -O2 -march=native
+CXXFLAGS	+= -Wall -std=c++17 -mavx2 -mfma
+OPTFLAGS	= # -O2 -march=native
 INCLUDES	= -I. -I./include
 LIBS		= #-pthread
 SOURCES		= $(wildcard *.cpp)

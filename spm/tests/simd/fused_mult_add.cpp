@@ -39,15 +39,19 @@ void fuse_mult_add(float* a, float* b, float* c, float* res, size_t n)
 
 void compare(float* a, float* b)
 {
+	uint32_t mismatch = 0;
 	for (size_t i = 0; i < 8; i++)
 	{
-		if (a[i] != b[i])
+		if (std::fabs(a[i] - b[i]) > 1e-6) // fma is more precise than plain
 		{
-			std::cout << "Mismatch at index " << i << ": " << a[i] << " != " << b[i] << std::endl;
-			return;
+			mismatch++;
+			std::printf("mismatch at index %lu: %.6f != %.6f\n", i, a[i], b[i]);
 		}
 	}
-	std::cout << "Arrays are equal." << std::endl;
+	if (!mismatch)
+		std::cout << "Arrays are equal." << std::endl;
+	else
+		std::cout << mismatch << " mismatches" << std::endl;
 }
 
 int main(int argc, const char** argv)
