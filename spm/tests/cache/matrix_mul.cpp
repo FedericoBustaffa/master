@@ -105,6 +105,34 @@ matrix tiled_mm(const matrix& a, const matrix& b, size_t tiles)
 	return res;
 }
 
+matrix tiled_loop_mm(const matrix& a, const matrix& b, size_t tiles)
+{
+	assert(a.rows() == b.cols());
+	matrix res(a.rows(), b.rows());
+	size_t T = std::ceil(a.rows() / tiles);
+
+	for (size_t i = 0; i < a.rows(); i += T)
+	{
+		for (size_t k = 0; k < a.cols(); k += T)
+		{
+			for (size_t j = 0; j < b.cols(); j += T)
+			{
+				// compute a tile
+				for (size_t ii = i; ii < std::min(i + T, a.rows()); ii++)
+				{
+					for (size_t kk = k; kk < std::min(k + T, a.cols()); kk++)
+					{
+						for (size_t jj = j; jj < std::min(j + T, b.cols()); jj++)
+							res(ii, jj) += a(ii, kk) * b(kk, jj);
+					}
+				}
+			}
+		}
+	}
+
+	return res;
+}
+
 int main(int argc, const char** argv)
 {
 	size_t n = 128, m = 128, l = 128;
@@ -136,27 +164,33 @@ int main(int argc, const char** argv)
 	timer timer;
 	matrix res = naive_mm(a, b);
 	double naive_time = timer.lap("naive");
-	save_matrix("naive.txt", res);
+	// save_matrix("naive.txt", res);
 
 	timer.reset();
 	res = transpose_mm(a, b);
 	double transpose_time = timer.lap("transpose");
-	save_matrix("transpose.txt", res);
+	// save_matrix("transpose.txt", res);
 	std::printf("transpose speed up: %.2f\n", naive_time / transpose_time);
 
 	timer.reset();
 	res = looporder_mm(a, b);
 	double loop_time = timer.lap("looporder");
-	save_matrix("looporder.txt", res);
+	// save_matrix("looporder.txt", res);
 	std::printf("looporder speed up: %.2f\n", naive_time / loop_time);
 
-	for (size_t t = 2; t <= 128; t = t * 2)
+	for (size_t t = 2; t <= 64; t *= 2)
 	{
 		timer.reset();
 		res = tiled_mm(a, b, t);
 		double tiled_time = timer.lap("tile");
-		save_matrix("tiled.txt", res);
+		// save_matrix("tiled.txt", res);
 		std::printf("%lu tiles speed up: %.2f\n", t, naive_time / tiled_time);
+
+		timer.reset();
+		res = tiled_loop_mm(a, b, t);
+		double tiled_loop_time = timer.lap("tile_loop");
+		// save_matrix("tiled_loop.txt", res);
+		std::printf("%lu tiles loop speed up: %.2f\n", t, naive_time / tiled_loop_time);
 	}
 
 	return 0;

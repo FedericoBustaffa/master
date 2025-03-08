@@ -1,6 +1,6 @@
 CXX 		= g++
 CXXFLAGS	+= -Wall -std=c++17
-OPTFLAGS	= -O3
+OPTFLAGS	= -O2
 INCLUDES	= -I. -I./include
 LIBS		=
 SOURCES		= $(wildcard *.cpp)
