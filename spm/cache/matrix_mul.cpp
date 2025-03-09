@@ -80,7 +80,7 @@ matrix transpose_mm(const matrix& a, const matrix& b)
 matrix tiled_mm(const matrix& a, const matrix& b, size_t tiles)
 {
 	assert(a.rows() == b.cols());
-	matrix res(a.rows(), b.rows());
+	matrix res(a.rows(), b.cols());
 	size_t T = std::ceil(a.rows() / tiles);
 
 	for (size_t i = 0; i < a.rows(); i += T)
@@ -108,7 +108,7 @@ matrix tiled_mm(const matrix& a, const matrix& b, size_t tiles)
 matrix tiled_loop_mm(const matrix& a, const matrix& b, size_t tiles)
 {
 	assert(a.rows() == b.cols());
-	matrix res(a.rows(), b.rows());
+	matrix res(a.rows(), b.cols());
 	size_t T = std::ceil(a.rows() / tiles);
 
 	for (size_t i = 0; i < a.rows(); i += T)
