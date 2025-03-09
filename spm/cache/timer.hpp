@@ -13,11 +13,10 @@ public:
 
 	void reset() { m_Start = std::chrono::high_resolution_clock::now(); }
 
-	double lap(const char* label)
+	double lap()
 	{
 		m_Stop = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> duration = m_Stop - m_Start;
-		std::printf("%s elapsed time: %f seconds\n", label, duration.count());
 
 		return duration.count();
 	}

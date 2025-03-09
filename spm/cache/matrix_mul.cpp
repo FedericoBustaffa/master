@@ -77,11 +77,10 @@ matrix transpose_mm(const matrix& a, const matrix& b)
 	return res;
 }
 
-matrix tiled_mm(const matrix& a, const matrix& b, size_t tiles)
+matrix tiled_mm(const matrix& a, const matrix& b, size_t T)
 {
 	assert(a.rows() == b.cols());
 	matrix res(a.rows(), b.cols());
-	size_t T = std::ceil(a.rows() / tiles);
 
 	for (size_t i = 0; i < a.rows(); i += T)
 	{
@@ -105,11 +104,10 @@ matrix tiled_mm(const matrix& a, const matrix& b, size_t tiles)
 	return res;
 }
 
-matrix tiled_loop_mm(const matrix& a, const matrix& b, size_t tiles)
+matrix tiled_loop_mm(const matrix& a, const matrix& b, size_t T)
 {
 	assert(a.rows() == b.cols());
 	matrix res(a.rows(), b.cols());
-	size_t T = std::ceil(a.rows() / tiles);
 
 	for (size_t i = 0; i < a.rows(); i += T)
 	{
@@ -163,35 +161,38 @@ int main(int argc, const char** argv)
 	// results files
 	timer timer;
 	matrix res = naive_mm(a, b);
-	double naive_time = timer.lap("naive");
-	// save_matrix("naive.txt", res);
+	double naive_time = timer.lap();
+	std::printf("%s elapsed time: %f seconds\n", "naive", naive_time);
+	save_matrix("naive.txt", res);
 
 	timer.reset();
 	res = transpose_mm(a, b);
-	double transpose_time = timer.lap("transpose");
-	// save_matrix("transpose.txt", res);
+	double transpose_time = timer.lap();
+	save_matrix("transpose.txt", res);
+	std::printf("%s elapsed time: %f seconds - ", "transpose", transpose_time);
 	std::printf("transpose speed up: %.2f\n", naive_time / transpose_time);
 
 	timer.reset();
 	res = looporder_mm(a, b);
-	double loop_time = timer.lap("looporder");
-	// save_matrix("looporder.txt", res);
+	double loop_time = timer.lap();
+	save_matrix("looporder.txt", res);
+	std::printf("%s elapsed time: %f seconds - ", "looporder", loop_time);
 	std::printf("looporder speed up: %.2f\n", naive_time / loop_time);
 
-	for (size_t t = 2; t <= 64; t *= 2)
-	{
-		timer.reset();
-		res = tiled_mm(a, b, t);
-		double tiled_time = timer.lap("tile");
-		// save_matrix("tiled.txt", res);
-		std::printf("%lu tiles speed up: %.2f\n", t, naive_time / tiled_time);
+	const size_t T = 64;
+	timer.reset();
+	res = tiled_mm(a, b, T);
+	double tiled_time = timer.lap();
+	save_matrix("tiled.txt", res);
+	std::printf("%s elapsed time: %f seconds - ", "tile", tiled_time);
+	std::printf("tile size %lu speed up: %.2f\n", T, naive_time / tiled_time);
 
-		timer.reset();
-		res = tiled_loop_mm(a, b, t);
-		double tiled_loop_time = timer.lap("tile_loop");
-		// save_matrix("tiled_loop.txt", res);
-		std::printf("%lu tiles loop speed up: %.2f\n", t, naive_time / tiled_loop_time);
-	}
+	timer.reset();
+	res = tiled_loop_mm(a, b, T);
+	double tiled_loop_time = timer.lap();
+	save_matrix("tiled_loop.txt", res);
+	std::printf("%s elapsed time: %f seconds - ", "tile_loop", tiled_loop_time);
+	std::printf("tile size %lu loop speed up: %.2f\n", T, naive_time / tiled_loop_time);
 
 	return 0;
 }
