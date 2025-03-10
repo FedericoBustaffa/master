@@ -9,12 +9,12 @@ TARGET		= $(SOURCES:.cpp=)
 .PHONY: all clean recompile
 
 %: %.cpp
-	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.x $< $(LIBS)
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.out $< $(LIBS)
 
 
 all: $(TARGET)
 
 clean:
-	-rm -rf *.o *~ *.x *.txt
+	-rm -rf *.o *~ *.out *.txt
 
 recompile: clean all
