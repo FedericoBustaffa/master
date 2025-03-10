@@ -57,7 +57,7 @@ matrix avx_mm(const matrix& a, const matrix& b)
 			}
 
 			// reduction sum
-			__m128 lo = _mm256_castps256_ps128(vc);
+			__m128 lo = _mm256_extractf128_ps(vc, 0);
 			__m128 hi = _mm256_extractf128_ps(vc, 1);
 			__m128 partial = _mm_add_ps(lo, hi);
 			__m128 shuf = _mm_movehdup_ps(partial);
