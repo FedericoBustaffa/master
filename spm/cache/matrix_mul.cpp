@@ -30,7 +30,7 @@ void save_matrix(const char* path, const matrix& m)
 
 matrix naive_mm(const matrix& a, const matrix& b)
 {
-	assert(a.rows() == b.cols());
+	assert(a.cols() == b.rows());
 	matrix res(a.rows(), b.cols());
 	for (size_t i = 0; i < a.rows(); i++)
 	{
@@ -46,7 +46,7 @@ matrix naive_mm(const matrix& a, const matrix& b)
 
 matrix looporder_mm(const matrix& a, const matrix& b)
 {
-	assert(a.rows() == b.cols());
+	assert(a.cols() == b.rows());
 	matrix res(a.rows(), b.cols());
 	for (size_t i = 0; i < a.rows(); i++)
 	{
@@ -62,7 +62,7 @@ matrix looporder_mm(const matrix& a, const matrix& b)
 
 matrix transpose_mm(const matrix& a, const matrix& b)
 {
-	assert(a.rows() == b.cols());
+	assert(a.cols() == b.rows());
 	matrix res(a.rows(), b.cols());
 	matrix bt = b.transpose();
 	for (size_t i = 0; i < a.rows(); i++)
@@ -79,7 +79,7 @@ matrix transpose_mm(const matrix& a, const matrix& b)
 
 matrix tiled_mm(const matrix& a, const matrix& b, size_t T)
 {
-	assert(a.rows() == b.cols());
+	assert(a.cols() == b.rows());
 	matrix res(a.rows(), b.cols());
 
 	for (size_t i = 0; i < a.rows(); i += T)
@@ -106,7 +106,7 @@ matrix tiled_mm(const matrix& a, const matrix& b, size_t T)
 
 matrix tiled_loop_mm(const matrix& a, const matrix& b, size_t T)
 {
-	assert(a.rows() == b.cols());
+	assert(a.cols() == b.rows());
 	matrix res(a.rows(), b.cols());
 
 	for (size_t i = 0; i < a.rows(); i += T)
