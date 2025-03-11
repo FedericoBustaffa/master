@@ -1,5 +1,5 @@
 CXX 		= g++
-CXXFLAGS	+= -Wall -std=c++14 -march=native -mavx -mavx2
+CXXFLAGS	+= -Wall -std=c++14 -march=native -mavx -mavx2 -mfma
 OPTFLAGS	= -O3
 INCLUDES	= -I. -I./include
 LIBS		= #-pthread
