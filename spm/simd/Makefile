@@ -1,7 +1,7 @@
 CXX 		= g++
-CXXFLAGS	+= -Wall -std=c++17 -mavx -mavx2 -mfma
-OPTFLAGS	= -O3 -march=native
-INCLUDES	= -I. -I../include
+CXXFLAGS	+= -Wall -std=c++14 -march=native -mavx -mavx2
+OPTFLAGS	= -O3
+INCLUDES	= -I. -I./include
 LIBS		= #-pthread
 SOURCES		= $(wildcard *.cpp)
 TARGET		= $(SOURCES:.cpp=)

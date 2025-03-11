@@ -1,4 +1,3 @@
-#include <iostream>
 #include <random>
 #include <chrono>
 #include <immintrin.h>
@@ -54,7 +53,7 @@ int main(int argc, const char** argv)
 {
 	uint64_t e = argc <= 1 ? 20UL : std::atoi(argv[1]);
 	uint64_t n = 1 << e;
-	double size = (n * sizeof(float)) / (1024 * 1024);
+	double size = (double)(n * sizeof(float)) / (1024 * 1024);
 	std::printf("array size: %lu -> %g MB\n", n, size);
 
 	float* a = new float[n];

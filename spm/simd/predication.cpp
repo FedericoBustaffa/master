@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdio>
 #include <immintrin.h>
 #include <random>
 
