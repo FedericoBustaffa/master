@@ -5,7 +5,41 @@
 #include <limits>
 #include <hpc_helpers.hpp>
 
-void softmax_auto(const float *input, float *output, size_t K) {}
+void softmax_auto(const float *__restrict__ input, float *__restrict__ output, size_t K)
+{
+	// Find the maximum to stabilize the computation of the exponential
+	float max0 = -std::numeric_limits<float>::infinity();
+	float max1 = -std::numeric_limits<float>::infinity();
+	float max2 = -std::numeric_limits<float>::infinity();
+	float max3 = -std::numeric_limits<float>::infinity();
+
+// loop unrolling
+#pragma GCC unroll 4
+	for (size_t i = 0; i < K; i += 4)
+	{
+		max0 = std::max(max0, input[i]);
+		max1 = std::max(max1, input[i + 1]);
+		max2 = std::max(max2, input[i + 2]);
+		max3 = std::max(max3, input[i + 3]);
+	}
+	float max_val = std::max(std::max(max0, max1), std::max(max2, max3));
+
+// computes all exponentials with the shift of max_val and the total sum
+#pragma GCC ivdep
+	for (size_t i = 0; i < K; ++i)
+		output[i] = std::exp(input[i] - max_val);
+
+	float sum = 0.0f;
+#pragma GCC ivdep
+	for (size_t i = 0; i < K; ++i)
+		sum += output[i];
+
+	// normalize by dividing for the total sum
+	for (size_t i = 0; i < K; ++i)
+	{
+		output[i] /= sum;
+	}
+}
 
 std::vector<float> generate_random_input(size_t K, float min = -1.0f, float max = 1.0f)
 {
