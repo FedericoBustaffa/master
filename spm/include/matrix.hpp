@@ -20,7 +20,7 @@ public:
 
 	matrix(const matrix& other) : m_Rows(other.m_Rows), m_Cols(other.m_Cols)
 	{
-		m_Matrix = new float[m_Rows * m_Cols];
+		m_Matrix = static_cast<float*>(_mm_malloc(m_Rows * m_Cols * sizeof(float), 32));
 		for (size_t i = 0; i < m_Rows; i++)
 		{
 			for (size_t j = 0; j < m_Cols; j++)
@@ -32,7 +32,7 @@ public:
 
 	void operator=(const matrix& other)
 	{
-		m_Matrix = new float[m_Rows * m_Cols];
+		m_Matrix = static_cast<float*>(_mm_malloc(m_Rows * m_Cols * sizeof(float), 32));
 		for (size_t i = 0; i < m_Rows; i++)
 		{
 			for (size_t j = 0; j < m_Cols; j++)
