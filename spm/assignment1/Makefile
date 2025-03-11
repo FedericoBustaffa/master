@@ -1,12 +1,12 @@
-CXX                = g++ -std=c++17
-OPTFLAGS	   = -O3
-AUTOFLAGS          = 
-AVXFLAGS           = 
-CXXFLAGS          += -Wall 
-INCLUDES	   = -I. -I./include
-LIBS               = #-pthread -fopenmp
-SOURCES            = $(wildcard *.cpp)
-TARGET             = $(SOURCES:.cpp=)
+CXXFLAGS		= g++ -std=c++17
+OPTFLAGS		= -O3
+AUTOFLAGS		= 
+AVXFLAGS		= -mavx2 -mfma
+CXXFLAGS		+= -Wall 
+INCLUDES		= -I. -I./include
+LIBS			= #-pthread -fopenmp
+SOURCES			= $(wildcard *.cpp)
+TARGET			= $(SOURCES:.cpp=)
 
 .PHONY: all clean cleanall 
 
