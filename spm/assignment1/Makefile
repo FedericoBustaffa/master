@@ -1,7 +1,8 @@
-CXXFLAGS		= g++ -std=c++17
+CXX 			= g++
+CXXFLAGS		= -std=c++17
 OPTFLAGS		= -O3
 AUTOFLAGS		= 
-AVXFLAGS		= -mavx2 -mfma
+AVXFLAGS		= -mavx -mfma
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include
 LIBS			= #-pthread -fopenmp
@@ -23,5 +24,6 @@ all: $(TARGET)
 
 clean: 
 	-rm -fr *.o *~
+
 cleanall: clean
 	-rm -fr *.out
