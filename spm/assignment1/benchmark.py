@@ -13,10 +13,10 @@ if __name__ == "__main__":
         plain_times.append(float(p.split(" ")[4][:-1]))
         auto_times.append(float(a.split(" ")[4][:-1]))
 
-    plt.figure(figsize=(10, 6), dpi=200)
+    plt.figure(figsize=(10, 6), dpi=300)
     plt.xlabel("Time")
     plt.ylabel("Frequency")
     plt.hist(plain_times, alpha=0.5, edgecolor="k", label="Plain")
     plt.hist(auto_times, alpha=0.5, edgecolor="k", label="Auto")
     plt.legend()
-    plt.show()
+    plt.savefig("./hist.png")
