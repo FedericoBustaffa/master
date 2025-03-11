@@ -11,7 +11,7 @@ TARGET             = $(SOURCES:.cpp=)
 .PHONY: all clean cleanall 
 
 %: %.cpp
-	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@ $< $(LIBS)
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.out $< $(LIBS)
 
 # For files with _avx in their name, append flags to CXXFLAGS
 %_avx: CXXFLAGS += ${AVXFLAGS}
@@ -24,4 +24,4 @@ all: $(TARGET)
 clean: 
 	-rm -fr *.o *~
 cleanall: clean
-	-rm -fr $(TARGET)
+	-rm -fr *.out
