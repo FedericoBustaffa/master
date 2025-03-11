@@ -1,8 +1,8 @@
 CXX 			= g++
-CXXFLAGS		= -std=c++17
+CXXFLAGS		= -std=c++17 -fopt-info-vec-missed
 OPTFLAGS		= -O3
-AUTOFLAGS		= -march=native -ftree-vectorize -fopt-info-vec-missed -ffast-math
-AVXFLAGS		= -mavx -mfma
+AUTOFLAGS		= -march=native -ffast-math -funroll-loops
+AVXFLAGS		= -march=native -mavx
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include
 LIBS			= #-pthread -fopenmp
