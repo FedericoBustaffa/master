@@ -15,7 +15,7 @@ done
 
 # run all simulations and save results
 make -j
-for j in {512,1024,2048,4096,8192,16384}; do
+for j in {128,256,512,1024,2048,4096,8192,16384}; do
     for i in {0..49}; do
         ./softmax_plain.out $j 1 1>> plain_times_$j.txt 2>> plain_res_$j.txt
         ./softmax_auto.out $j 1 1>> auto_times_$j.txt 2>> auto_res_$j.txt
@@ -37,7 +37,7 @@ function compare_results() {
     fi
 }
 
-for j in {512,1024,2048,4096,8192,16384}; do
+for j in {128,256,512,1024,2048,4096,8192,16384}; do
     compare_results plain_res_$j.txt auto_res_$j.txt
     compare_results plain_res_$j.txt avx_res_$j.txt
     compare_results auto_res_$j.txt avx_res_$j.txt
