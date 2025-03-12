@@ -38,6 +38,5 @@ done
 
 # aggregate time files
 python aggregate.py *_times_*.txt
-python plot.py
 
 rm *.txt
