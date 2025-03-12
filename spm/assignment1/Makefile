@@ -1,5 +1,5 @@
 CXX 			= g++
-CXXFLAGS		= -std=c++17 -fopt-info-vec-missed
+CXXFLAGS		= -std=c++17 # -fopt-info-vec-missed
 OPTFLAGS		= -O3
 AUTOFLAGS		= -march=native -ffast-math -funroll-loops
 AVXFLAGS		= -march=native -mavx
@@ -23,7 +23,7 @@ TARGET			= $(SOURCES:.cpp=)
 all: $(TARGET)
 
 clean: 
-	-rm -fr *.o *~
+	-rm -fr *.o *~ *.txt
 
 cleanall: clean
 	-rm -fr *.out
