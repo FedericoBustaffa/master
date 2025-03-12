@@ -8,7 +8,7 @@
 
 float max_avx(const float *input, size_t K)
 {
-	short carry = K % 8;
+	int8_t carry = K % 8;
 
 	// compute the max
 	__m256 vmax = _mm256_loadu_ps(&input[0]);
@@ -62,7 +62,7 @@ float expsum_avx(const float *input, float *output, size_t K, float max_val)
 {
 	__m256 vsum = _mm256_setzero_ps();
 	__m256 vmax = _mm256_set1_ps(max_val);
-	short carry = K % 8;
+	int8_t carry = K % 8;
 	for (size_t i = 0; i < K - carry; i += 8)
 	{
 		__m256 vin = _mm256_loadu_ps(&input[i]);
@@ -87,7 +87,7 @@ float expsum_avx(const float *input, float *output, size_t K, float max_val)
 
 void div_avx(float *output, size_t K, float sum)
 {
-	short carry = K % 8;
+	int8_t carry = K % 8;
 	__m256 vsum = _mm256_set1_ps(sum);
 	for (size_t i = 0; i < K - carry; i += 8)
 	{
