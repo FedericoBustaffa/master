@@ -35,5 +35,7 @@ if __name__ == "__main__":
 
     # save the results
     df = pd.DataFrame(times)
+    order = ["plain", "auto", "avx"]
+    df["algorithm"] = pd.Categorical(df["algorithm"], categories=order, ordered=True)
     df.sort_values(by=["algorithm", "array_length"], inplace=True)
     df.to_csv("./times.csv", index=False, header=True, float_format="%g")
