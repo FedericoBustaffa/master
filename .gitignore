@@ -30,3 +30,29 @@ compile_commands.json
 .DS_Store
 Thumbs.db
 
+# latex for reports
+*.aux
+*.fdb_latexmk
+*.fls
+*.toc
+*.log
+*.lol
+*.out
+*.bbl
+*.lof
+*.blg
+*.gz
+*.pdf
+*.snm
+*.nav
+*.pgf
+*.vcd
+*.vpp.bak*
+*.lck
+*.pygtex
+*.pygstyle
+*.Identifier
+
+.vscode/
+svg-inkscape/
+
