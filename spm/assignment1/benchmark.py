@@ -1,28 +1,38 @@
-import matplotlib.pyplot as plt
+import sys
+
+import numpy as np
+import pandas as pd
 
 if __name__ == "__main__":
-    file = open("log.txt", "r")
-    lines = file.readlines()
-    plains, autos, avxs = zip(
-        *[
-            (lines[i][:-1], lines[i + 1][:-1], lines[i + 2][:-1])
-            for i in range(0, len(lines), 3)
-        ]
-    )
+    times = {
+        "algorithm": [],
+        "array_length": [],
+        "time": [],
+    }
 
-    plain_times = []
-    auto_times = []
-    avx_times = []
-    for p, au, avx in zip(plains, autos, avxs):
-        plain_times.append(float(p.split(" ")[4][:-1]))
-        auto_times.append(float(au.split(" ")[4][:-1]))
-        avx_times.append(float(avx.split(" ")[4][:-1]))
+    for i, path in enumerate(sys.argv):
+        if i == 0:
+            continue
 
-    plt.figure(figsize=(10, 6), dpi=300)
-    plt.xlabel("Time")
-    plt.ylabel("Frequency")
-    plt.hist(plain_times, alpha=0.5, edgecolor="k", label="Plain")
-    plt.hist(auto_times, alpha=0.5, edgecolor="k", label="Auto")
-    plt.hist(avx_times, alpha=0.5, edgecolor="k", label="AVX")
-    plt.legend()
-    plt.savefig("./hist.png")
+        # extract properties
+        tokens = path.split("_")
+        alg = tokens[0]
+        n = int(tokens[2].removesuffix(".txt"))
+
+        # fill with results
+        times["algorithm"].append(alg)
+        times["array_length"].append(n)
+
+        with open(path, "r") as file:
+            lines = file.readlines()
+            ts = [
+                float(line.split(" ")[4].removesuffix("s\n"))
+                for line in lines
+                if line != ""
+            ]
+
+            times["time"].append(np.mean(ts))
+
+    df = pd.DataFrame(times)
+    print(df)
+    df.to_csv("./times.csv", index=False, header=True, float_format="%g")

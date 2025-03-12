@@ -4,6 +4,7 @@
 *.so
 *.log
 *.txt
+*.csv
 
 bin/
 obj/
