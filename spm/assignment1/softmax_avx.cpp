@@ -5,11 +5,10 @@
 #include <limits>
 #include <hpc_helpers.hpp>
 #include <avx_mathfun.h>
-#include <cstring>
 
 float max_avx(const float *input, size_t K)
 {
-	int64_t carry = K % 8;
+	short carry = K % 8;
 
 	// compute the max
 	__m256 vmax = _mm256_loadu_ps(&input[0]);
@@ -44,24 +43,74 @@ float max_avx(const float *input, size_t K)
 	return max_val;
 }
 
+float hsum256_ps(__m256 v)
+{
+	// reduce the vmax vector to 4 floats
+	__m128 lo = _mm256_castps256_ps128(v);
+	__m128 hi = _mm256_extractf128_ps(v, 1);
+	lo = _mm_add_ps(lo, hi);
+
+	__m128 shuf = _mm_movehdup_ps(lo);
+	__m128 maxs = _mm_add_ps(lo, shuf);
+	shuf = _mm_movehl_ps(shuf, maxs);
+	maxs = _mm_add_ss(maxs, shuf);
+
+	return _mm_cvtss_f32(maxs);
+}
+
+float expsum_avx(const float *input, float *output, size_t K, float max_val)
+{
+	__m256 vsum = _mm256_setzero_ps();
+	__m256 vmax = _mm256_set1_ps(max_val);
+	short carry = K % 8;
+	for (size_t i = 0; i < K - carry; i += 8)
+	{
+		__m256 vin = _mm256_loadu_ps(&input[i]);
+		__m256 e = exp256_ps(_mm256_sub_ps(vin, vmax));
+		_mm256_storeu_ps(&output[i], e);
+
+		vsum = _mm256_add_ps(vsum, e);
+	}
+
+	// horizontal sum of 8 elements vector
+	float sum = hsum256_ps(vsum);
+
+	// handle the last elements sequentially
+	for (size_t i = K - carry; i < K; i++)
+	{
+		output[i] = std::exp(input[i] - max_val);
+		sum += output[i];
+	}
+
+	return sum;
+}
+
+void div_avx(float *output, size_t K, float sum)
+{
+	short carry = K % 8;
+	__m256 vsum = _mm256_set1_ps(sum);
+	for (size_t i = 0; i < K - carry; i += 8)
+	{
+		__m256 v = _mm256_loadu_ps(&output[i]);
+		v = _mm256_div_ps(v, vsum);
+		_mm256_storeu_ps(&output[i], v);
+	}
+
+	// handle the last elements sequentially
+	for (size_t i = K - carry; i < K; ++i)
+		output[i] /= sum;
+}
+
 void softmax_avx(const float *input, float *output, size_t K)
 {
 	// Find the maximum to stabilize the computation of the exponential
 	float max_val = max_avx(input, K);
 
 	// computes all exponentials with the shift of max_val and the total sum
-	float sum = 0.0f;
-	for (size_t i = 0; i < K; ++i)
-	{
-		output[i] = std::exp(input[i] - max_val);
-		sum += output[i];
-	}
+	float sum = expsum_avx(input, output, K, max_val);
 
 	// normalize by dividing for the total sum
-	for (size_t i = 0; i < K; ++i)
-	{
-		output[i] /= sum;
-	}
+	div_avx(output, K, sum);
 }
 
 std::vector<float> generate_random_input(size_t K, float min = -1.0f, float max = 1.0f)
