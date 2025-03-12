@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
             times["time"].append(np.mean(ts))
 
+    # save the results
     df = pd.DataFrame(times)
-    print(df)
+    df.sort_values(by=["algorithm", "array_length"], inplace=True)
     df.to_csv("./times.csv", index=False, header=True, float_format="%g")

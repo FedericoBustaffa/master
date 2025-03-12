@@ -6,6 +6,7 @@ for f in *.txt; do
 done
 
 # run all simulations and save results
+make -j
 for j in {512,1024,2048,4096,8192}; do
     for i in {0..49}; do
         ./softmax_plain.out $j 1 1>> plain_times_$j.txt 2>> plain_res_$j.txt
@@ -36,6 +37,7 @@ for j in {512,1024,2048,4096,8192}; do
 done
 
 # aggregate time files
-python benchmark.py *_times_*.txt
+python aggregate.py *_times_*.txt
+python plot.py
 
 rm *.txt
