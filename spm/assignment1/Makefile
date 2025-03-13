@@ -1,7 +1,7 @@
 CXX 			= g++
 CXXFLAGS		= -std=c++17
-OPTFLAGS		= -O3
-AUTOFLAGS		= -fopt-info-vec-missed -march=native -ffast-math
+OPTFLAGS		= -O2
+AUTOFLAGS		= -fopt-info-vec-missed -O3 -march=native -ffast-math
 AVXFLAGS		= -march=native -mavx
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include
@@ -12,7 +12,10 @@ TARGET			= $(SOURCES:.cpp=)
 .PHONY: all clean cleanall 
 
 %: %.cpp
-	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.out $< $(LIBS)
+	$(CXX) $(INCLUDES) $(CXXFLAGS) -o $@.out $< $(LIBS)
+
+# For files with _plain in their name, append flags to CXXFLAGS
+%_plain: CXXFLAGS += ${OPTFLAGS}
 
 # For files with _avx in their name, append flags to CXXFLAGS
 %_avx: CXXFLAGS += ${AVXFLAGS}
