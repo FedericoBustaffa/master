@@ -1,7 +1,7 @@
 CXX 			= g++
-CXXFLAGS		= -std=c++17 -fopt-info-vec-missed
+CXXFLAGS		= -std=c++17
 OPTFLAGS		= -O3
-AUTOFLAGS		= -march=native -ffast-math
+AUTOFLAGS		= -march=native -fopt-info-vec-missed -ffast-math
 AVXFLAGS		= -march=native -mavx
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include
@@ -23,7 +23,7 @@ TARGET			= $(SOURCES:.cpp=)
 all: $(TARGET)
 
 clean: 
-	-rm -fr *.o *~ *.txt
+	-rm -fr *.o *~
 
 cleanall: clean
 	-rm -fr *.out

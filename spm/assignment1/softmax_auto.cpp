@@ -5,12 +5,13 @@
 #include <limits>
 #include <hpc_helpers.hpp>
 
-float max_unroll2(const float *input, size_t K)
+inline float max_unroll2(const float *input, size_t K)
 {
 	float max0 = -std::numeric_limits<float>::infinity();
 	float max1 = -std::numeric_limits<float>::infinity();
 
 	size_t i = 0;
+#pragma GCC unroll 2
 	for (; i + 1 < K; i += 2)
 	{
 		max0 = std::max(max0, input[i]);
@@ -23,7 +24,7 @@ float max_unroll2(const float *input, size_t K)
 	return std::max(max0, max1);
 }
 
-float max_unroll4(const float *input, size_t K)
+inline float max_unroll4(const float *input, size_t K)
 {
 	// Find the maximum to stabilize the computation of the exponential
 	float max0 = -std::numeric_limits<float>::infinity();
@@ -32,6 +33,7 @@ float max_unroll4(const float *input, size_t K)
 	float max3 = -std::numeric_limits<float>::infinity();
 
 	size_t i = 0;
+#pragma GCC unroll 4
 	for (; i + 3 < K; i += 4)
 	{
 		max0 = std::max(max0, input[i]);
@@ -48,12 +50,15 @@ float max_unroll4(const float *input, size_t K)
 
 void softmax_auto(const float *__restrict__ input, float *__restrict__ output, size_t K)
 {
-	// float max_val = max_unroll2(input, K);
+#if 1
+	float max_val = max_unroll2(input, K);
+#else
 	float max_val = max_unroll4(input, K);
+#endif
 
 	// computes all exponentials with the shift of max_val and the total sum
 	float sum = 0.0f;
-	// #pragma GCC ivdep
+#pragma GCC ivdep
 	for (size_t i = 0; i < K; ++i)
 	{
 		output[i] = std::exp(input[i] - max_val);

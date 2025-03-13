@@ -1,12 +1,5 @@
 #!/bin/bash
 
-if [ -f "times.csv" ]; then
-    echo "times.csv is going to be overwrited"
-    read -p "do you want to continue? [y/n] " choice
-    if [[ "$choice" != "y" ]]; then
-        exit 1
-    fi
-fi
 
 # run all simulations and save results
 make -j

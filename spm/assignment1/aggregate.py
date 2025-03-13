@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 
 if __name__ == "__main__":
-    times = {
-        "algorithm": [],
-        "array_length": [],
-        "time": [],
-    }
+    plain_df = {"elements": [], "time": []}
+    auto_df = {"elements": [], "time": []}
+    avx_df = {"elements": [], "time": []}
+
+    dfs = {"plain": plain_df, "auto": auto_df, "avx": avx_df}
 
     for i, path in enumerate(sys.argv):
         if i == 0:
@@ -17,11 +17,7 @@ if __name__ == "__main__":
         # extract properties
         tokens = path.split("_")
         alg = tokens[0]
-        n = int(tokens[2].removesuffix(".txt"))
-
-        # fill with results
-        times["algorithm"].append(alg)
-        times["array_length"].append(n)
+        dfs[alg]["elements"].append(int(tokens[2].removesuffix(".txt")))
 
         with open(path, "r") as file:
             lines = file.readlines()
@@ -31,11 +27,10 @@ if __name__ == "__main__":
                 if line != ""
             ]
 
-            times["time"].append(np.mean(ts))
+            dfs[alg]["time"].append(np.mean(ts))
 
     # save the results
-    df = pd.DataFrame(times)
-    order = ["plain", "auto", "avx"]
-    df["algorithm"] = pd.Categorical(df["algorithm"], categories=order, ordered=True)
-    df.sort_values(by=["algorithm", "array_length"], inplace=True)
-    df.to_csv("./times.csv", index=False, header=True, float_format="%g")
+    for k in dfs.keys():
+        df = pd.DataFrame(dfs[k])
+        df.sort_values(by="elements", inplace=True)
+        df.to_csv(f"./{k}.csv", index=False, header=True, float_format="%g")
