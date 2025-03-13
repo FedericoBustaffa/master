@@ -60,10 +60,11 @@ void softmax_auto(const float *__restrict__ input, float *__restrict__ output, s
 	float sum = 0.0f;
 #pragma GCC ivdep
 	for (size_t i = 0; i < K; ++i)
-	{
 		output[i] = std::exp(input[i] - max_val);
+
+#pragma GCC ivdep
+	for (size_t i = 0; i < K; ++i)
 		sum += output[i];
-	}
 
 	// normalize by dividing for the total sum
 	for (size_t i = 0; i < K; ++i)

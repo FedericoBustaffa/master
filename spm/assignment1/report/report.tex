@@ -48,20 +48,17 @@ technique by a factor of 2 and 4.
 
 \begin{table}[H]
 	\centering
-\begin{tabular}{rrrr}
-\toprule
-elements & plain & unroll2 & unroll4 \\
-\midrule
-128 & 6.4622 & 6.0589 & 6.7177 \\
-256 & 8.0844 & 7.4174 & 8.3612 \\
-512 & 12.4130 & 9.8962 & 10.9375 \\
-1024 & 18.2785 & 15.6059 & 17.5419 \\
-2048 & 32.9529 & 25.2045 & 31.0087 \\
-4096 & 58.4076 & 45.6296 & 55.4784 \\
-8192 & 112.3360 & 90.8315 & 106.5570 \\
-16384 & 219.0860 & 168.7640 & 213.8510 \\
-\bottomrule
-\end{tabular}
+	\begin{tabular}{rrrr}
+		\toprule
+		Elements & Plain($\mu$s) & Unroll2($\mu$s) & Unroll4($\mu$s) \\
+		\midrule
+		128      & 6.0034        & 6.1522          & 5.4836          \\
+		1024     & 16.0794       & 12.7019         & 10.4904         \\
+		8192     & 98.5208       & 42.4009         & 36.0347         \\
+		16384    & 187.9920      & 74.9148         & 67.2819         \\
+		\bottomrule
+	\end{tabular}
+	\caption{Execution time for different factors of loop unrolling}
 \end{table}
 
 \subsection{Intrinsics}
