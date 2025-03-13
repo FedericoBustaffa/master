@@ -51,13 +51,26 @@ inline float max_unroll4(const float *input, size_t K)
 void softmax_auto(const float *__restrict__ input, float *__restrict__ output, size_t K)
 {
 #if 0
+	float max_val = -std::numeric_limits<float>::infinity();
+	for (size_t i = 0; i < K; ++i)
+		max_val = std::max(max_val, input[i]);
+#else
+#if 0
 	float max_val = max_unroll2(input, K);
 #else
 	float max_val = max_unroll4(input, K);
 #endif
+#endif
 
 	// computes all exponentials with the shift of max_val and the total sum
 	float sum = 0.0f;
+#if 0
+	for (size_t i = 0; i < K; ++i)
+	{
+		output[i] = std::exp(input[i] - max_val);
+		sum += output[i];
+	}
+#else
 #pragma GCC ivdep
 	for (size_t i = 0; i < K; ++i)
 		output[i] = std::exp(input[i] - max_val);
@@ -65,10 +78,16 @@ void softmax_auto(const float *__restrict__ input, float *__restrict__ output, s
 #pragma GCC ivdep
 	for (size_t i = 0; i < K; ++i)
 		sum += output[i];
+#endif
 
-	// normalize by dividing for the total sum
+#if 0
 	for (size_t i = 0; i < K; ++i)
 		output[i] /= sum;
+#else
+	float inv_sum = 1.0f / sum;
+	for (size_t i = 0; i < K; ++i)
+		output[i] *= inv_sum;
+#endif
 }
 
 std::vector<float> generate_random_input(size_t K, float min = -1.0f, float max = 1.0f)
