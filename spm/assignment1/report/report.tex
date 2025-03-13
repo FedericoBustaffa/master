@@ -1,7 +1,7 @@
 \documentclass[12pt, a4paper]{article}
 
 \usepackage[T1]{fontenc}
-\usepackage[italian]{babel}
+\usepackage[english]{babel}
 \usepackage{mathtools, amsmath, amssymb, amsthm}
 \usepackage[hidelinks]{hyperref}
 \usepackage{tabularx}
@@ -18,11 +18,30 @@
 
 \section{Introduction}
 
-In this report will be discussed the work that
+This report discuss implementation choices and performances of the two
+implementations of the \textit{softmax} function. The first using the
+\textit{auto-vectorization} provided by the compiler and the second using
+explicit vectorization with \textit{intrinsics}.
+
+Both versions were compared to each other and with the plain naive version
+provided by the teacher, mainly evaluating the execution time as the input size
+varies.
 
 \section{Implementation}
 
+For both versions, optimizations optimizations were applied incrementally,
+adding changes and testing performance at each step. The performance evaluation
+was not fine grained, it always measures the global execution time that the
+function takes.
+
 \subsection{Auto-Vectorization}
+
+To check if optimizations were applied by the compiler, it has been used the
+\verb|-fopt-info-vec-missed| flag.
+
+The first step of the algorithm finds the maximum value of the given array, by
+looping over it. To improve this step the \textit{loop unrolling} technique was
+applied.
 
 \subsection{Intrinsics}
 

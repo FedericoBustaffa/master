@@ -36,7 +36,7 @@ float max_avx(const float *input, size_t K)
 	lo = _mm_blendv_ps(lo, shuf, mask);
 	float max_val = _mm_cvtss_f32(lo);
 
-	// handle the last elements sequentially
+	// handle last elements sequentially
 	for (size_t i = K - carry; i < K; i++)
 		max_val = std::max(max_val, input[i]);
 
@@ -75,7 +75,7 @@ float expsum_avx(const float *input, float *output, size_t K, float max_val)
 	// horizontal sum of 8 elements vector
 	float sum = hsum256_ps(vsum);
 
-	// handle the last elements sequentially
+	// handle last elements sequentially
 	for (size_t i = K - carry; i < K; i++)
 	{
 		output[i] = std::exp(input[i] - max_val);
@@ -96,7 +96,7 @@ void div_avx(float *output, size_t K, float sum)
 		_mm256_storeu_ps(&output[i], v);
 	}
 
-	// handle the last elements sequentially
+	// handle last elements sequentially
 	for (size_t i = K - carry; i < K; ++i)
 		output[i] /= sum;
 }
