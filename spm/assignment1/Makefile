@@ -1,7 +1,7 @@
 CXX 			= g++
 CXXFLAGS		= -std=c++17 -fopt-info-vec-missed
 OPTFLAGS		= -O3
-AUTOFLAGS		= -march=native
+AUTOFLAGS		= -march=native -ffast-math
 AVXFLAGS		= -march=native -mavx
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include

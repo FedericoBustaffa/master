@@ -10,12 +10,15 @@ float max_unroll2(const float *input, size_t K)
 	float max0 = -std::numeric_limits<float>::infinity();
 	float max1 = -std::numeric_limits<float>::infinity();
 
-#pragma GCC unroll 2
-	for (size_t i = 0; i < K; i += 2)
+	size_t i = 0;
+	for (; i + 1 < K; i += 2)
 	{
 		max0 = std::max(max0, input[i]);
 		max1 = std::max(max1, input[i + 1]);
 	}
+
+	for (; i < K; ++i)
+		max0 = std::max(max0, input[i]);
 
 	return std::max(max0, max1);
 }
@@ -28,9 +31,8 @@ float max_unroll4(const float *input, size_t K)
 	float max2 = -std::numeric_limits<float>::infinity();
 	float max3 = -std::numeric_limits<float>::infinity();
 
-// loop unrolling
-#pragma GCC unroll 4
-	for (size_t i = 0; i < K; i += 4)
+	size_t i = 0;
+	for (; i + 3 < K; i += 4)
 	{
 		max0 = std::max(max0, input[i]);
 		max1 = std::max(max1, input[i + 1]);
@@ -38,13 +40,16 @@ float max_unroll4(const float *input, size_t K)
 		max3 = std::max(max3, input[i + 3]);
 	}
 
+	for (; i < K; ++i)
+		max0 = std::max(max0, input[i]);
+
 	return std::max(std::max(max0, max1), std::max(max2, max3));
 }
 
 void softmax_auto(const float *__restrict__ input, float *__restrict__ output, size_t K)
 {
-	float max_val = max_unroll2(input, K);
-	// float max_val = max_unroll4(input, K);
+	// float max_val = max_unroll2(input, K);
+	float max_val = max_unroll4(input, K);
 
 	// computes all exponentials with the shift of max_val and the total sum
 	float sum = 0.0f;

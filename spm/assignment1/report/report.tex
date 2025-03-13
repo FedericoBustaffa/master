@@ -43,6 +43,52 @@ The first step of the algorithm finds the maximum value of the given array, by
 looping over it. To improve this step the \textit{loop unrolling} technique was
 applied.
 
+\begin{tabular}{lrr}
+\toprule
+algorithm & array_length & time(ms) \\
+\midrule
+plain & 128 & 0.00655874 \\
+plain & 256 & 0.00760896 \\
+plain & 512 & 0.0106856 \\
+plain & 1024 & 0.0162711 \\
+plain & 2048 & 0.027929 \\
+plain & 4096 & 0.0505665 \\
+plain & 8192 & 0.0946497 \\
+plain & 16384 & 0.18755 \\
+auto & 128 & 0.00593386 \\
+auto & 256 & 0.00786736 \\
+auto & 512 & 0.00968278 \\
+auto & 1024 & 0.0124476 \\
+auto & 2048 & 0.0171976 \\
+auto & 4096 & 0.0267017 \\
+auto & 8192 & 0.0402455 \\
+auto & 16384 & 0.070792 \\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{lrr}
+\toprule
+algorithm & array_length & time(ms) \\
+\midrule
+plain & 128 & 0.00674264 \\
+plain & 256 & 0.00753692 \\
+plain & 512 & 0.0105057 \\
+plain & 1024 & 0.0163952 \\
+plain & 2048 & 0.0285608 \\
+plain & 4096 & 0.0499976 \\
+plain & 8192 & 0.09533 \\
+plain & 16384 & 0.186542 \\
+auto & 128 & 0.00697554 \\
+auto & 256 & 0.00738098 \\
+auto & 512 & 0.0091367 \\
+auto & 1024 & 0.0123843 \\
+auto & 2048 & 0.0183268 \\
+auto & 4096 & 0.0262108 \\
+auto & 8192 & 0.0401128 \\
+auto & 16384 & 0.0732032 \\
+\bottomrule
+\end{tabular}
+
 \subsection{Intrinsics}
 
 \section{Comparisons}
