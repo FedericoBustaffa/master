@@ -44,12 +44,33 @@ and testing performance at each step.
 To check if optimizations were applied by the compiler, it has been used the
 \verb|-fopt-info-vec-missed| flag.
 
-The first step was to use \verb|-O3| flag to enable all possible optimizations
-the compiler can apply on the plain version of the algorithm.
+The first step was to use \verb|-O3| and \verb|-march=native| flags to enable
+all possible optimizations the compiler can apply. At this stage, the compiler
+notifies that basically every loop can't be vectorized.
 
-The first step of the algorithm finds the maximum value of the given array, by
-looping over it. To improve this step the was applied the \textit{loop unrolling}
-technique by a factor of 2 and 4.
+To let the compiler optimize the code, the first changes were:
+\begin{itemize}
+	\item Add the \verb|__restricted__| qualifier to \verb|input| and
+	      \verb|output| arrays, in order to avoid pointer aliasing.
+	\item Split the second loop in two loops, in order to let the first line
+	      not be affected by the \textit{write-after-write} dependecy that the
+	      second line causes.
+	\item Compute the inverse of the sum before the last loop and perform a
+	      multiplication instead of a division, generally less performant than
+	      the first one.
+\end{itemize}
+The first step of the algorithm also finds the maximum value of the given array
+by looping over it. To improve this step the \textit{loop unrolling} technique
+was applied by a factor of 2 and 4.
+
+In the end the \verb|-ffast-math| flag was enabled, causing the higher
+improvement but also some approximation error.
+
+\subsection{Intrinsics}
+
+For the explicit \textit{intrinsics} version
+
+\section{Comparisons}
 
 \begin{table}[H]
 	\centering
@@ -65,10 +86,5 @@ technique by a factor of 2 and 4.
 	\end{tabular}
 	\caption{Execution time for different factors of loop unrolling}
 \end{table}
-
-\subsection{Intrinsics}
-
-\section{Comparisons}
-
 
 \end{document}
