@@ -50,7 +50,7 @@ inline float max_unroll4(const float *input, size_t K)
 
 void softmax_auto(const float *__restrict__ input, float *__restrict__ output, size_t K)
 {
-#if 1
+#if 0
 	float max_val = max_unroll2(input, K);
 #else
 	float max_val = max_unroll4(input, K);

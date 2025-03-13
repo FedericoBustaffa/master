@@ -48,16 +48,20 @@ technique by a factor of 2 and 4.
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{lrrr}
-		\toprule
-		Elements & Plain(ms) & Unroll2 Time(ms) & Unroll4 Time(ms) \\
-		\midrule
-		128      & 0.00674   & 0.00593          & 0.00697          \\
-		1024     & 0.01639   & 0.01244          & 0.01238          \\
-		8192     & 0.09465   & 0.04024          & 0.04011          \\
-		16384    & 0.18654   & 0.07079          & 0.07320          \\
-		\bottomrule
-	\end{tabular}
+\begin{tabular}{rrrr}
+\toprule
+elements & plain & unroll2 & unroll4 \\
+\midrule
+128 & 6.4622 & 6.0589 & 6.7177 \\
+256 & 8.0844 & 7.4174 & 8.3612 \\
+512 & 12.4130 & 9.8962 & 10.9375 \\
+1024 & 18.2785 & 15.6059 & 17.5419 \\
+2048 & 32.9529 & 25.2045 & 31.0087 \\
+4096 & 58.4076 & 45.6296 & 55.4784 \\
+8192 & 112.3360 & 90.8315 & 106.5570 \\
+16384 & 219.0860 & 168.7640 & 213.8510 \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \subsection{Intrinsics}

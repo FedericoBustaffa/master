@@ -2,7 +2,7 @@
 
 
 # run all simulations and save results
-make -j
+make -j 2>&1 | grep softmax_auto.cpp
 for j in {128,256,512,1024,2048,4096,8192,16384}; do
     for i in {0..49}; do
         ./softmax_plain.out $j 1 1>> plain_times_$j.txt 2>> plain_res_$j.txt
