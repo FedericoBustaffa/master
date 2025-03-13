@@ -21,26 +21,31 @@
 
 \section{Introduction}
 
-This report discuss implementation choices and performances of the two
-implementations of the \textit{softmax} function. The first using the
-\textit{auto-vectorization} provided by the compiler and the second using
-explicit vectorization with \textit{intrinsics}.
+This report discuss the methodology adopted for the optimized implementations
+of the \textit{softmax} function. The first one using the \textit{auto-vectorization}
+provided by the compiler and the second using explicit vectorization with
+\textit{intrinsics}.
 
-Both versions were compared to each other and with the plain naive version
-provided by the teacher, mainly evaluating the execution time as the input size
-varies.
+Both versions were compared to each other and with the \textit{plain} naive
+version provided by the teacher, mainly evaluating the execution time as the
+input size varies.
 
-\section{Implementation}
+\section{Methods and Implementation}
 
-For both versions, optimizations optimizations were applied incrementally,
-adding changes and testing performance at each step. The performance evaluation
-was not fine grained, it always measures the global execution time that the
-function takes.
+The plain version of the algorithm has been compiled with only the \verb|-O2|
+flag, disabling the \textit{auto-vectorization}; mainly to see the improvement
+over a non vectorized version.
+
+For both versions, optimizations were applied incrementally by adding changes
+and testing performance at each step.
 
 \subsection{Auto-Vectorization}
 
 To check if optimizations were applied by the compiler, it has been used the
 \verb|-fopt-info-vec-missed| flag.
+
+The first step was to use \verb|-O3| flag to enable all possible optimizations
+the compiler can apply on the plain version of the algorithm.
 
 The first step of the algorithm finds the maximum value of the given array, by
 looping over it. To improve this step the was applied the \textit{loop unrolling}
