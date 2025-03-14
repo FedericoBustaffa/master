@@ -15,8 +15,9 @@ float max_avx(const float *input, size_t K)
 	for (size_t i = 8; i < K - carry; i += 8)
 	{
 		__m256 v = _mm256_loadu_ps(&input[i]);
-		__m256 mask = _mm256_cmp_ps(v, vmax, _CMP_GT_OS);
-		vmax = _mm256_blendv_ps(v, vmax, mask);
+		vmax = _mm256_max_ps(v, vmax);
+		// __m256 mask = _mm256_cmp_ps(v, vmax, _CMP_GT_OS);
+		// vmax = _mm256_blendv_ps(v, vmax, mask);
 	}
 
 	// reduce the vmax vector to 4 floats
