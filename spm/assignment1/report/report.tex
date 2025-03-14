@@ -18,6 +18,7 @@
 
 \maketitle
 \tableofcontents
+\clearpage
 
 \section{Introduction}
 
@@ -91,7 +92,7 @@ vector. Once completed the loop an horizontal sum was computed to obtain the
 final sum value. The final loop was changed in a vectorized division of a
 vector by a scalar.
 
-\section{Experiments}
+\section{Experiments and Comparisons}
 
 Every test was repeated ten times, taking the average time of the total
 computation of the function (no fine-grained benchmark was performed). Here
@@ -99,17 +100,63 @@ some results from the various implementations explored.
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{rrrr}
+	\begin{tabular}{r | rrrrr}
 		\toprule
-		Elements & Plain($\mu$s) & Unroll2($\mu$s) & Unroll4($\mu$s) \\
+		Elements & Plain    & \verb|-O3| + Code & \verb|-ffast-math| & $\text{AVX}_\text{mask}$ & $\text{AVX}_\text{max}$ \\
 		\midrule
-		128      & 6.0034        & 6.1522          & 5.4836          \\
-		1024     & 16.0794       & 12.7019         & 10.4904         \\
-		8192     & 98.5208       & 42.4009         & 36.0347         \\
-		16384    & 187.9920      & 74.9148         & 67.2819         \\
+		128      & 6.3744   & 6.1925            & 6.4468             & 1.2825                   & 0.8136                  \\
+		1024     & 18.2587  & 16.7189           & 10.3464            & 6.3154                   & 4.6816                  \\
+		8192     & 110.9500 & 89.1472           & 37.2496            & 43.3424                  & 29.2679                 \\
+		16384    & 222.0010 & 173.7950          & 70.2605            & 83.8557                  & 55.7626                 \\
 		\bottomrule
 	\end{tabular}
-	\caption{Execution time for different factors of loop unrolling}
+	\caption{Execution time in $\mu$s for different implementations}
+	\label{tab: times}
 \end{table}
+
+As reported in table \ref{tab: times}, the second AVX version was the best, in
+terms of execution time and speed up for every test performed.
+
+To see how much every version improve the plain one, the speed up values were
+also computed and reported in the table below.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{r|rrrr}
+		\toprule
+		Elements & \verb|-O3| + Code & fast-math & $\text{AVX}_\text{mask}$ & $\text{AVX}_\text{max}$ \\
+		\midrule
+		128      & 1.0294            & 0.9888    & 4.9704                   & 7.8350                  \\
+		1024     & 1.0921            & 1.7647    & 2.8912                   & 3.9001                  \\
+		8192     & 1.2446            & 2.9786    & 2.5598                   & 3.7908                  \\
+		16384    & 1.2774            & 3.1597    & 2.6474                   & 3.9812                  \\
+		\bottomrule
+	\end{tabular}
+	\caption{Speed Up values for different implementations}
+	\label{tab: speedup}
+\end{table}
+
+The plot below shows how both AVX versions work very well on small inputs and
+stabilize around some speed up value as the input dimension increases.
+
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.75\linewidth]{speed_up.svg}
+	\caption{Speed Up trend over input dimension}
+\end{figure}
+
+For the auto version with \verb|-ffast-math| we can see instead how the speed
+up increase as the input gets larger, surpassing one of the AVX versions for
+large input sizes.
+
+\section{Conclusions}
+
+In conclusion, the AVX versions are better in most cases, even for large arrays;
+they are also more verbose and difficult to implement, but at least give much
+more control over code.
+
+On the other hand, the auto versions are simpler to implement but require more
+compiler work and to see a significant speed up, flags like \verb|-ffast-math|
+must be enabled, causing also approximation errors.
 
 \end{document}
