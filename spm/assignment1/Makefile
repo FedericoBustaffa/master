@@ -2,7 +2,7 @@ CXX 			= g++
 CXXFLAGS		= -std=c++17
 OPTFLAGS		= -O2
 AUTOFLAGS		= -fopt-info-vec-missed -O3 -march=native -ffast-math
-AVXFLAGS		= -march=native -mavx
+AVXFLAGS		= -O3 -march=native -mavx
 CXXFLAGS		+= -Wall 
 INCLUDES		= -I. -I./include
 LIBS			= #-pthread -fopenmp
