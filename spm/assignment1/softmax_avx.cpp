@@ -23,18 +23,21 @@ float max_avx(const float *input, size_t K)
 	// reduce the vmax vector to 4 floats
 	__m128 lo = _mm256_castps256_ps128(vmax);
 	__m128 hi = _mm256_extractf128_ps(vmax, 1);
-	__m128 mask = _mm_cmp_ps(lo, hi, _CMP_GT_OS);
-	lo = _mm_blendv_ps(lo, hi, mask);
+	// __m128 mask = _mm_cmp_ps(lo, hi, _CMP_GT_OS);
+	// lo = _mm_blendv_ps(lo, hi, mask);
+	lo = _mm_max_ps(lo, hi);
 
 	// reduce the lo vector to 2 floats
 	__m128 shuf = _mm_movehdup_ps(lo);
-	mask = _mm_cmp_ps(lo, shuf, _CMP_GT_OS);
-	lo = _mm_blendv_ps(lo, shuf, mask);
+	// mask = _mm_cmp_ps(lo, shuf, _CMP_GT_OS);
+	// lo = _mm_blendv_ps(lo, shuf, mask);
+	lo = _mm_max_ps(lo, shuf);
 
 	// extract the max from the last 2 elements
 	shuf = _mm_movehl_ps(shuf, lo);
-	mask = _mm_cmp_ps(lo, shuf, _CMP_GT_OS);
-	lo = _mm_blendv_ps(lo, shuf, mask);
+	// mask = _mm_cmp_ps(lo, shuf, _CMP_GT_OS);
+	// lo = _mm_blendv_ps(lo, shuf, mask);
+	lo = _mm_max_ps(lo, shuf);
 	float max_val = _mm_cvtss_f32(lo);
 
 	// handle last elements sequentially

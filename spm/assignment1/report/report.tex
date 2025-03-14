@@ -72,9 +72,30 @@ The \textit{intrinsics} version was also compiled with some optimization flag
 like \verb|-O3|, \verb|-march=native| and \verb|-mavx|, to enable the vectorized
 instruction set and improve memory access.
 
-The first major change was to find the max value of the array
+In order to find the max value of the array, the algorithm works on chunks of 8
+elements at a time, comparing 2 chunks and returning a chunk where in position
+$i$ there is the max value between $a_i$ and $b_i$, where $a$ and $b$ are the
+two chunks. So a \verb|vmax| vector of 8 elements were updated at every
+iteration, consuming all the elements in the array.
 
-\section{Comparisons}
+In the end, similarly to an horizontal sum, the absolute maximum were extracted
+with some shift and \textit{sse} intrinsics operations.
+
+In the first implementation, the comparisons were done with bitmasks and blend
+operations, while in the final implementation the \verb|_mm256_max_ps| and
+\verb|_mm_max_ps| functions are used for better performance.
+
+The second loop was improved by computing the exponantial with the
+\verb|exp256_ps| function provided and accumulating the sum in a 8 elements
+vector. Once completed the loop an horizontal sum was computed to obtain the
+final sum value. The final loop was changed in a vectorized division of a
+vector by a scalar.
+
+\section{Experiments}
+
+Every test was repeated ten times, taking the average time of the total
+computation of the function (no fine-grained benchmark was performed). Here
+some results from the various implementations explored.
 
 \begin{table}[H]
 	\centering
