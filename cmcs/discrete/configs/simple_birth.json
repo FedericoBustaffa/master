@@ -1,7 +1,0 @@
-{
-	"initial_N": [1, 2, 4],
-	"delta": [1, 2],
-	"lambda": [1, 2, 4],
-	"sigma": [1, 2, 4],
-	"iterations": [10, 20, 40]
-}

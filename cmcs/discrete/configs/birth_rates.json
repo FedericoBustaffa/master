@@ -1,0 +1,9 @@
+{
+  "initial_N": [100],
+  "delta": [2],
+  "birth_rate": [1, 2, 2.5],
+  "death_rate": [1],
+  "incoming": [10],
+  "carrying_capacity": [120],
+  "iterations": [20]
+}
