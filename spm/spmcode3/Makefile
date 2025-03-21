@@ -19,4 +19,4 @@ some-cpp-features: some-cpp-features.cpp
 clean: 
 	-rm -fr *.o *~
 cleanall: clean
-	-rm -fr $(TARGET)
+	-rm -fr *.out
