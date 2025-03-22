@@ -1,14 +1,14 @@
-CXX                = nvcc -std=c++17 -x cu
+CXX                = nvcc -arch=sm_35 -ccbin /usr/bin/g++-10 -Wno-deprecated-gpu-targets -std=c++17 -x cu
 OPTFLAGS	   = -O3
 CXXFLAGS          += 
 INCLUDES	   = -I . 
-SOURCES            = $(wildcard *.cpp)
-TARGET             = $(SOURCES:.cpp=)
+SOURCES            = $(wildcard *.cu)
+TARGET             = $(SOURCES:.cu=)
 
 .PHONY: all clean cleanall 
 
-%: %.cpp
-	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@ $< $(LIBS)
+%: %.cu
+	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.out $< $(LIBS)
 
 # For files with _avx in their name
 %_avx: CXX = g++ -std=c++17
@@ -18,6 +18,7 @@ TARGET             = $(SOURCES:.cpp=)
 all: $(TARGET)
 
 clean: 
-	-rm -fr *.o *~
+	-rm -fr *.o
+
 cleanall: clean
-	-rm -fr $(TARGET)
+	-rm -fr *.out
