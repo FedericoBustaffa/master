@@ -1,20 +1,22 @@
 CXX 		= g++
-CXXFLAGS	+= -Wall -std=c++17
 OPTFLAGS	= -O2
 INCLUDES	= -I./include/
-LIBS		=
-SOURCES		= $(wildcard *.cpp)
-TARGET		= $(SOURCES:.cpp=)
+CXXFLAGS	+= -Wall -std=c++17 $(OPTFLAGS) $(INCLUDES)
+TARGET		= move.out
 
 .PHONY: all clean recompile
 
-%: %.cpp
-	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@.out $< $(LIBS)
-
-
 all: $(TARGET)
 
+# executable
+move.out: main.o buffer.o
+	$(CXX) $^ -o $@
+
+# object files
+main.o: main.cpp
+buffer.o: buffer.hpp buffer.cpp
+
 clean:
-	-rm -rf *.o *~ *.out *.txt
+	-rm -rf *.o *.out
 
 recompile: clean all
