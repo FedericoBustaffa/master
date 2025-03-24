@@ -5,10 +5,10 @@ TARGET = threading.out
 
 all: $(TARGET)
 
-threading.out: threading.o
+threading.out: main.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
-threading.o: threading.cpp
+main.o: main.cpp buffer.hpp
 	$(CXX) $(CXXFLAGS) $^ -c
 
 clean:
