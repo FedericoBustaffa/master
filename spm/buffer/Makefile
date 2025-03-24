@@ -9,7 +9,7 @@ threading.out: main.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
 main.o: main.cpp buffer.hpp
-	$(CXX) $(CXXFLAGS) $^ -c
+	$(CXX) $(CXXFLAGS) main.cpp -c
 
 clean:
 	-rm *.o *.out
