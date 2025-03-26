@@ -13,13 +13,13 @@ public:
 	buffer(const buffer& other);
 
 	// move constructor
-	buffer(buffer&& other);
+	buffer(buffer&& other) noexcept;
 
 	// copy assign operator
 	void operator=(const buffer& other);
 
 	// move assign operator
-	void operator=(buffer&& other);
+	void operator=(buffer&& other) noexcept;
 
 	~buffer();
 

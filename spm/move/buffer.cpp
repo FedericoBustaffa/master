@@ -19,7 +19,7 @@ buffer::buffer(const buffer& other) : m_size(other.m_size), m_capacity(other.m_c
 }
 
 // move constructor
-buffer::buffer(buffer&& other) : m_size(other.m_size), m_capacity(other.m_capacity)
+buffer::buffer(buffer&& other) noexcept : m_size(other.m_size), m_capacity(other.m_capacity)
 {
 	m_buffer = other.m_buffer;
 
@@ -46,7 +46,7 @@ void buffer::operator=(const buffer& other)
 }
 
 // move assign operator
-void buffer::operator=(buffer&& other)
+void buffer::operator=(buffer&& other) noexcept
 {
 	m_size = other.m_size;
 	m_capacity = other.m_capacity;

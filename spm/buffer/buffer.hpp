@@ -23,7 +23,7 @@ public:
 		if (m_size < m_capacity)
 			m_buffer[m_size++] = element;
 
-		m_empty.notify_all();
+		m_empty.notify_one();
 	}
 
 	T pop()
@@ -34,7 +34,7 @@ public:
 
 		T element = m_buffer[m_size--];
 
-		m_full.notify_all();
+		m_full.notify_one();
 
 		return element;
 	}
