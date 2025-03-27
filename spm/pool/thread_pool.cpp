@@ -8,7 +8,7 @@ void work(uint32_t id)
 	std::cout << "Thread " << id << " shutting down" << std::endl;
 }
 
-thread_pool::thread_pool(size_t nworkers) : m_running(true)
+thread_pool::thread_pool(uint32_t nworkers) : m_running(true)
 {
 	nworkers = nworkers == 0 ? std::thread::hardware_concurrency() : nworkers;
 	m_workers.reserve(nworkers);
@@ -23,4 +23,6 @@ void thread_pool::shutdown()
 		w.join();
 }
 
-thread_pool::~thread_pool() {}
+thread_pool::~thread_pool()
+{
+}

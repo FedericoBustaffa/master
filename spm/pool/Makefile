@@ -1,17 +1,17 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++17 -O2
+CXXFLAGS = -g -Wall -std=c++17
 LIBS = -pthread
 OBJS = main.o thread_pool.o
-TARGET = run.out
+TARGET = pool.out
 
 .PHONY: all clean recompile
 
 all: $(TARGET)
 
-run.out: $(OBJS)
+pool.out: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
-main.o: main.cpp
+main.o: main.cpp safe_queue.hpp
 thread_pool.o: thread_pool.hpp thread_pool.cpp
 
 clean:

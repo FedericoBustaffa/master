@@ -9,7 +9,7 @@
 class thread_pool
 {
 public:
-	thread_pool(size_t nworkers = 0);
+	thread_pool(uint32_t workers = 0);
 
 	template <typename Func, typename... Args>
 	void submit(Func f, Args... args)

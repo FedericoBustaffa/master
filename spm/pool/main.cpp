@@ -1,14 +1,10 @@
 #include <iostream>
+#include <thread>
+#include <future>
 
-#include "thread_pool.hpp"
-
-void hello() { std::cout << "hello" << std::endl; }
+#include "safe_queue.hpp"
 
 int main(int argc, const char** argv)
 {
-	thread_pool pool(8);
-	pool.submit(hello);
-	pool.shutdown();
-
 	return 0;
 }
