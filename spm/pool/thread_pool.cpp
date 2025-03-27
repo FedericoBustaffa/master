@@ -16,8 +16,6 @@ thread_pool::thread_pool(size_t nworkers) : m_running(true)
 		m_workers.emplace_back(work, i);
 }
 
-void thread_pool::submit(std::function<void()> f) {}
-
 void thread_pool::shutdown()
 {
 	m_running = false;

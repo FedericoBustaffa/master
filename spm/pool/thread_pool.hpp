@@ -11,7 +11,12 @@ class thread_pool
 public:
 	thread_pool(size_t nworkers = 0);
 
-	void submit(std::function<void()> task);
+	template <typename Func, typename... Args>
+	void submit(Func f, Args... args)
+	{
+		std::thread t(f, args...);
+		t.join();
+	}
 
 	void shutdown();
 
