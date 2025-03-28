@@ -1,16 +1,12 @@
 #ifndef THREADPOOL_HPP
 #define THREADPOOL_HPP
 
-#include <vector>
+#include <queue>
 #include <thread>
 #include <future>
 #include <functional>
 
 #include "task_queue.hpp"
-
-void work(uint32_t id)
-{
-}
 
 class thread_pool
 {
@@ -20,22 +16,36 @@ public:
 		nworkers = nworkers == 0 ? std::thread::hardware_concurrency() : nworkers;
 		m_workers.reserve(nworkers);
 		for (size_t i = 0; i < nworkers; ++i)
-			m_workers.emplace_back(work, i);
+			m_workers.emplace_back(work);
 	}
 
 	template <typename Func, typename... Args,
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
-	Ret submit(Func&& f, Args&&... args)
+	std::packaged_task<Ret(void)> make_task(Func&& func, Args&&... args)
 	{
-		std::future<Ret> result = m_tasks.push(f, args);
-		return result.get();
+		std::function<Ret(void)> aux =
+			std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
+		return std::packaged_task<Ret(void)>(aux);
 	}
 
-	template <typename Func, typename... Args,
-			  typename Ret = typename std::result_of<Func(Args...)>::type>
-	std::future<Ret> submit_async(Func&& f, Args&&... args)
+	void work()
 	{
-		return m_tasks.push(f, args);
+		while (true)
+		{
+			std::unique_lock<std::mutex> lock(m_mutex);
+			auto task = m_tasks.front();
+		}
+	}
+
+	template <typename Func, typename... Args, typename Ret = std::result_of<Func(Args...)>::type>
+	Ret submit(Func&& func, Args&&... args)
+	{
+		auto task = make_task(func, args...);
+		auto future = task.get_future();
+		std::function<void(void)> workload = task.operator()();
+		m_tasks.push(std::move(task));
+
+		return future.get();
 	}
 
 	void shutdown()
@@ -54,7 +64,9 @@ public:
 private:
 	bool m_running;
 	std::vector<std::thread> m_workers;
-	task_queue m_tasks;
+
+	std::queue<std::packaged_task<void(void)>> m_tasks;
+	std::mutex m_mutex;
 };
 
 #endif

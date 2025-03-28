@@ -4,13 +4,12 @@
 #include <queue>
 #include <mutex>
 #include <future>
+#include <functional>
 
 class task_queue
 {
 public:
-	task_queue()
-	{
-	}
+	task_queue() {}
 
 	template <typename Func, typename... Args,
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
@@ -31,17 +30,12 @@ public:
 	// 	return std::move(value);
 	// }
 
-	size_t size() const
-	{
-		return m_queue.size();
-	}
+	size_t size() const { return m_queue.size(); }
 
-	~task_queue()
-	{
-	}
+	~task_queue() {}
 
 private:
-	std::queue<int> m_queue;
+	std::queue<std::function<void(void)>> m_queue;
 	std::mutex m_mutex;
 };
 

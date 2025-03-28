@@ -4,11 +4,11 @@ CXXFLAGS          += -Wall
 INCLUDES	   = -I. -I./include
 LIBS               = -pthread
 SOURCES            = $(wildcard *.cpp)
-TARGET             = $(SOURCES:.cpp=)
+TARGET             = $(SOURCES:.cpp=.out)
 
 .PHONY: all clean cleanall 
 
-%: %.cpp
+%.out: %.cpp
 	$(CXX) $(INCLUDES) $(CXXFLAGS) $(OPTFLAGS) -o $@ $< $(LIBS)
 
 all: $(TARGET)
