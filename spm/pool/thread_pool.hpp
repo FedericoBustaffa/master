@@ -14,7 +14,7 @@ public:
 		nworkers = nworkers == 0 ? std::thread::hardware_concurrency() : nworkers;
 		m_Workers.reserve(nworkers);
 		for (size_t i = 0; i < nworkers; ++i)
-			m_Workers.emplace_back(work);
+			m_Workers.emplace_back(work, &m_Tasks);
 	}
 
 	template <typename Func, typename... Args,
@@ -41,11 +41,11 @@ public:
 	}
 
 private:
-	void work()
+	static void work(TaskQueue* m_Tasks)
 	{
 		while (true)
 		{
-			std::function<void(void)> task = m_Tasks.pop();
+			std::function<void(void)> task = m_Tasks->pop();
 			task();
 		}
 	}

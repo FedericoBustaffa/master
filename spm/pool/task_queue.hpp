@@ -60,9 +60,10 @@ private:
 		std::future<Ret> future = promise.get_future();
 
 		std::function<Ret(void)> aux =
-			std::bind(std::forward<Func>(func), std::move(promise), std::forward<Args>(args)...);
+			std::bind(std::forward<Func>(func), std::forward<std::promise>(std::move(promise)),
+					  std::forward<Args>(args)...);
 
-		return Task<Ret>(aux, future);
+		return Task<Ret>(std::move(aux), std::move(future));
 	}
 
 private:

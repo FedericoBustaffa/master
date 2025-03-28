@@ -9,18 +9,18 @@ class Task
 {
 public:
 	Task(std::function<void(void)>&& func, std::future<T>&& future)
-		: m_Function(func), m_Future(future)
+		: m_Function(std::move(func)), m_Future(std::move(future))
 	{
 	}
 
-	inline std::function<void(void)>&& get_function() const
+	inline std::function<void(void)>&& get_function()
 	{
-		return m_Function;
+		return std::move(m_Function);
 	}
 
-	inline std::future<T>& get_future() const
+	inline std::future<T>&& get_future()
 	{
-		return m_Future;
+		return std::move(m_Future);
 	}
 
 	~Task()
