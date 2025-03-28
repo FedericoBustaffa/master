@@ -1,42 +1,74 @@
 #ifndef TASK_QUEUE_HPP
 #define TASK_QUEUE_HPP
 
-#include <queue>
-#include <mutex>
-#include <future>
+#include <vector>
 #include <functional>
+#include <mutex>
+#include <condition_variable>
+#include <future>
 
-class task_queue
+#include "task.hpp"
+
+class TaskQueue
 {
 public:
-	task_queue() {}
+	TaskQueue()
+	{
+	}
+
+	inline size_t size() const
+	{
+		return m_Queue.size();
+	}
 
 	template <typename Func, typename... Args,
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
 	std::future<Ret> push(Func&& func, Args&&... args)
 	{
-		auto aux = std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
-		auto task = std::packaged_task<Ret(void)>(aux);
-		std::lock_guard<std::mutex> lock(m_mutex);
-		m_queue.push(task);
+		Task<Ret> task = make_task(std::forward<Func>(func), std::forward<Args>(args)...);
+
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		m_Queue.push_back(task.get_function());
+
+		m_Empty.notify_one();
+
+		return task.get_future();
 	}
 
-	// T&& pop()
-	// {
-	// 	std::lock_guard<std::mutex> lock(m_mutex);
-	// 	T&& value = std::move(m_queue.front());
-	// 	m_queue.pop();
+	std::function<void(void)> pop()
+	{
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		while (m_Queue.size() == 0)
+			m_Empty.wait(lock);
 
-	// 	return std::move(value);
-	// }
+		std::function<void(void)> func = m_Queue.front();
+		m_Queue.pop_back();
 
-	size_t size() const { return m_queue.size(); }
+		return func;
+	}
 
-	~task_queue() {}
+	~TaskQueue()
+	{
+	}
 
 private:
-	std::queue<std::function<void(void)>> m_queue;
-	std::mutex m_mutex;
+	template <typename Func, typename... Args,
+			  typename Ret = typename std::result_of<Func(Args...)>::type>
+	Task<Ret> make_task(Func&& func, Args&&... args)
+	{
+		std::promise<Ret> promise;
+		std::future<Ret> future = promise.get_future();
+
+		std::function<Ret(void)> aux =
+			std::bind(std::forward<Func>(func), std::move(promise), std::forward<Args>(args)...);
+
+		return Task<Ret>(aux, future);
+	}
+
+private:
+	std::vector<std::function<void(void)>> m_Queue;
+	std::mutex m_Mutex;
+	std::condition_variable m_Empty;
 };
 
 #endif
