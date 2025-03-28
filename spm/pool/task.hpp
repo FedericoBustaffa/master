@@ -11,6 +11,12 @@ public:
 	Task(std::function<void(void)>&& func, std::future<T>&& future)
 		: m_Function(std::move(func)), m_Future(std::move(future))
 	{
+		std::promise<Ret> promise;
+		std::future<Ret> future = promise.get_future();
+
+		std::function<Ret(void)> aux =
+			std::bind(std::forward<Func>(func), std::forward<std::promise>(std::move(promise)),
+					  std::forward<Args>(args)...);
 	}
 
 	inline std::function<void(void)>&& get_function()

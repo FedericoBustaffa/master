@@ -25,7 +25,7 @@ public:
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
 	std::future<Ret> push(Func&& func, Args&&... args)
 	{
-		Task<Ret> task = make_task(std::forward<Func>(func), std::forward<Args>(args)...);
+		Task<Ret> task = Task(std::forward<Func>(func), std::forward<Args>(args)...);
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
 		m_Queue.push_back(task.get_function());
@@ -49,21 +49,6 @@ public:
 
 	~TaskQueue()
 	{
-	}
-
-private:
-	template <typename Func, typename... Args,
-			  typename Ret = typename std::result_of<Func(Args...)>::type>
-	Task<Ret> make_task(Func&& func, Args&&... args)
-	{
-		std::promise<Ret> promise;
-		std::future<Ret> future = promise.get_future();
-
-		std::function<Ret(void)> aux =
-			std::bind(std::forward<Func>(func), std::forward<std::promise>(std::move(promise)),
-					  std::forward<Args>(args)...);
-
-		return Task<Ret>(std::move(aux), std::move(future));
 	}
 
 private:

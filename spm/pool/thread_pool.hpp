@@ -21,8 +21,7 @@ public:
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
 	Ret submit(Func&& func, Args&&... args)
 	{
-		std::future<Ret> result =
-			m_Tasks.push(std::forward<Func>(func), std::forward<Args>(args)...);
+		std::future<Ret> result = m_Tasks.push(func, args...);
 
 		return result.get();
 	}
