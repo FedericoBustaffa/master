@@ -11,7 +11,7 @@ all: $(TARGET)
 pool.out: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
-main.o: main.cpp safe_queue.hpp thread_pool.hpp
+main.o: main.cpp task_queue.hpp thread_pool.hpp
 
 clean:
 	-rm -rf *.o *.out
