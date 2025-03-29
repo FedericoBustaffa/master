@@ -28,17 +28,20 @@ public:
 		std::function<Ret(void)> aux_func =
 			std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
 
-		std::promise<Ret> promise;
+		std::unique_ptr<std::promise<Ret>> promise = std::make_unique<std::promise<Ret>>();
+		std::future<Ret> future = promise->get_future();
 
-		auto task_func = [p = std::move(promise), &aux_func]() mutable { p.set_value(aux_func()); };
+		std::function<void(void)> task_func = [p = std::move(promise), aux_func]() mutable {
+			p->set_value(aux_func());
+		};
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
-		m_Queue.emplace_back(task_func, std::move(promise), aux_func);
+		m_Queue.push_back(task_func);
 		lock.unlock();
 
 		m_Empty.notify_one();
 
-		return promise.get_future();
+		return future;
 	}
 
 	std::function<void(void)> pop()
