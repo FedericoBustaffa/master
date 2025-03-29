@@ -26,6 +26,13 @@ public:
 		return result.get();
 	}
 
+	template <typename Func, typename... Args,
+			  typename Ret = typename std::result_of<Func(Args...)>::type>
+	std::future<Ret> submit_async(Func&& func, Args&&... args)
+	{
+		return std::move(m_Tasks.push(func, args...));
+	}
+
 	void shutdown()
 	{
 		m_Running = false;

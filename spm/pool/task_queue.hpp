@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <future>
 
-#include "task.hpp"
+// #include "task.hpp"
 
 class TaskQueue
 {
@@ -25,14 +25,20 @@ public:
 			  typename Ret = typename std::result_of<Func(Args...)>::type>
 	std::future<Ret> push(Func&& func, Args&&... args)
 	{
-		Task<Ret> task = Task(std::forward<Func>(func), std::forward<Args>(args)...);
+		std::function<Ret(void)> aux_func =
+			std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
+
+		std::promise<Ret> promise;
+
+		auto task_func = [p = std::move(promise), &aux_func]() mutable { p.set_value(aux_func()); };
 
 		std::unique_lock<std::mutex> lock(m_Mutex);
-		m_Queue.push_back(task.get_function());
+		m_Queue.emplace_back(task_func, std::move(promise), aux_func);
+		lock.unlock();
 
 		m_Empty.notify_one();
 
-		return task.get_future();
+		return promise.get_future();
 	}
 
 	std::function<void(void)> pop()
